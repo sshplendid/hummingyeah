@@ -1,0 +1,19 @@
+language: node_js
+node_js:
+  - "10"
+cache: yarn
+before_script:
+  - yarn global add vue-cli
+  - sudo apt-get install expect
+script:
+  - ./.travis/deploy
+deploy:
+  provider: pages
+  local-dir: demo/dist/
+  skip-cleanup: true
+  github-token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure
+  keep-history: false
+  on:
+    branch: dev
+  target-branch: gh-pages
+  committer-from-gh: true
