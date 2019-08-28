@@ -3,13 +3,16 @@ node_js:
   - "10"
 cache: yarn
 before_script:
+  - echo "Hello $FOO"
+  - echo $(pwd)
   - yarn global add vue-cli
   - sudo apt-get install expect
 script:
-  - ./.travis/deploy
+  # - ./.travis/deploy
+  - npm run build
 deploy:
   provider: pages
-  local-dir: demo/dist/
+  local-dir: ./dist/
   skip-cleanup: true
   github-token: $GITHUB_TOKEN  # Set in travis-ci.org dashboard, marked secure
   keep-history: false
