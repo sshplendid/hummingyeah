@@ -8,7 +8,8 @@ import Pinterest from './views/Pinterest';
 const routes = [
   { path: '/', component: Main },
   { path: '/instagram', component: Instagram },
-  { path: '/pinterest', component: Pinterest }
+  { path: '/bookcover', component: Pinterest, props: {msg: '북커버'}},
+  { path: '/other', component: Pinterest, props: {msg: '기타'}}
 ];
 
 const router = new VueRouter({
