@@ -1,5 +1,8 @@
 # hummingyeah
 
+[![build status](https://travis-ci.org/sshplendid/hummingyeah.svg?branch=dev)](https://travis-ci.org/sshplendid/hummingyeah)
+---
+
 ## Project setup
 ```
 npm install
