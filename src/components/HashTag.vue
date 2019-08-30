@@ -1,33 +1,21 @@
 <template>
-  <span id="hashtag">
-    <a target="_blank" href="https://www.instagram.com/tags/{{ tag }}/">{{ tag }}</a>
-  </span>
-  <!--
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
-  -->
+  <a target="_blank" :href="urlPrefix + tagName">
+    <span id="hashtag">#{{ tagName }}</span>
+  </a>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
-  name: 'app',
-  components: {
-    HelloWorld
+  name: 'HashTag',
+  computed: {
+    urlPrefix: 'https://www.instagram.com/explore/tags/%EB%AF%B8%EC%83%9D%EB%AC%BC%EC%9D%B4%ED%94%8C%EB%9D%BC%ED%86%A4%EC%9D%84%EB%A7%8C%EB%82%AC%EC%9D%84%EB%95%8C/'
+  },
+  mounted () {
+    console.log(urlPrefix);
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div id="instagram">
     <div id="header">
-      <h2>함스타그램</h2>
+      <h2>작업일지</h2>
     </div>
     <Loading v-if="fetching" />
     <Feed v-for="feed in feeds" :key="feed.id" v-bind:feed="feed">
@@ -10,13 +10,13 @@
 </template>
 
 <script>
-import Feed from './components/Feed';
-import Loading from './components/Loading';
+import Feed from '../components/Feed';
+import Loading from '../components/Loading';
 
 const _target = '2532030987';
 const _fetchUrl = 'https://www.instagram.com/graphql/query/?';
 const _queryHash = 'f2405b236d85e8296cf30347c9f08c2a';
-const _first = 10;
+const _first = 100;
 
 export default {
   name: 'instagram',
