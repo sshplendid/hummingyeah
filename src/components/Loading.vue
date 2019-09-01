@@ -21,6 +21,7 @@ export default {
 </script>
 
 <style>
+/* https://codemyui.com/pure-css-bookshelf-loading-animation/ */
 .full {
   float: left;
   width: 100%;

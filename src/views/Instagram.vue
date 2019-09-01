@@ -3,9 +3,11 @@
     <div id="header">
       <h2>작업일지</h2>
     </div>
+    <b-card-group deck>
+      <Feed v-for="feed in feeds" :key="feed.id" v-bind:feed="feed">
+      </Feed>
+    </b-card-group>
     <Loading v-if="fetching" />
-    <Feed v-for="feed in feeds" :key="feed.id" v-bind:feed="feed">
-    </Feed>
   </div>
 </template>
 
@@ -45,43 +47,27 @@ export default {
 
       return url;
     },
-    fetchFeeds: function (url, feeds) {
+    fetchFeeds: async function (url, feeds) {
       this.fetching = true;
-      console.log(`Fetch! ${url}`);
-      fetch(url)
-      .then(res => {
-        console.log(`Fetch status: ${res.status} ${res.statusText}`);
-        return res.json();
-      })
-      .then(json => {
-        console.log(json);
-        var pageInfo = json.data.user.edge_owner_to_timeline_media.page_info;
-        console.log(`${pageInfo.has_next_page} ${pageInfo.end_cursor}`);
-
-        var nodeList = json.data.user.edge_owner_to_timeline_media.edges;    
-        nodeList.map(el => {
-          console.log(el);
-          var content = {};
-          content['caption'] = el.node.edge_media_to_caption.edges[0].node.text;
-          content['shortCode'] = el.node.shortcode;
-          content['displayUrl'] = el.node.display_url;
-
-          feeds.push(content);
-
-        });
-
-        this.fetching = false;
-      });
-    },
-    toogleLoadingImage: function(_switch) {
-      if(_switch) {
-        document.querySelector('#loadingImage').classList
-        .forEach(_class => {console.log(_class);});
-
+      var res = await fetch(url);
+      if(res.status === '200') {
+        alert('fetch api error.');
+        console.error(res);
         return;
       }
-
-    }
+      var json = await res.json();
+      var pageInfo = json.data.user.edge_owner_to_timeline_media.page_info;
+      
+      var nodeList = json.data.user.edge_owner_to_timeline_media.edges;    
+      nodeList.map(el => {
+        var content = {};
+        content['caption'] = el.node.edge_media_to_caption.edges[0].node.text;
+        content['shortCode'] = el.node.shortcode;
+        content['displayUrl'] = el.node.display_url;
+        feeds.push(content);
+      });
+      this.fetching = false;
+    },
   },
   mounted() {
     var url = this.makeFetchUrl();

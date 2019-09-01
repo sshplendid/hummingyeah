@@ -1,5 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import BootstrapVue from 'bootstrap-vue'
+
 import App from './App.vue'
 import Main from './views/Main';
 import Instagram from './views/Instagram';
@@ -16,6 +18,7 @@ const router = new VueRouter({
   routes // `routes: routes`의 줄임
 })
 
+Vue.use(BootstrapVue)
 Vue.use(VueRouter);
 Vue.config.productionTip = false
 
