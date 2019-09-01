@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ko">
+    <head>
+        <meta charset="utf-8" />
+        <title>scrapper</title>
+    </head>
+    <body>
+        <div>
+            <h1>...</h1>
+            <span>url</span> <input id="urlInput" /> <button id="fetchBtn">fetch</button> <button id="moreBtn">more</button>    
+            <p><span>cursor</span> <span id="end_cursor"></span></p>
+        </div>
+        <div id="timeline_container"></div>
+        <script>
+            var _has_next = false;
+            var _end_cursor = undefined;
+            var _first = 50;
+            var _after = undefined;
+            // document.onload = function () {
+                // fetchTest https://www.instagram.com/graphql/query/?query_hash=f2405b236d85e8296cf30347c9f08c2a&variables=%7B%22id%22%3A%222532030987%22%2C%22first%22%3A12%2C%22after%22%3A%22QVFCRXVoaVM3emRUYzBla3gwT19UMHltdFN3RWZmS3BMRE1sUm5YVW9iQl9ZdURIdWJ5LTBPNEs5UWc0Wmx6cmp3eEhVa2hTbnFxWGhRcS1veEc5YzQzQQ%3D%3D%22%7D
+                // moreTest https://www.instagram.com/graphql/query/?query_hash=f2405b236d85e8296cf30347c9f08c2a&variables=%7B%22id%22%3A%222532030987%22%2C%22first%22%3A12%2C%22after%22%3A%22QVFCakFuVzItdUplVkhCQ1dCNW1yY2t3OFl6SGNzcDNsRjI5SlZXYUJSOUp4YnpZZ2ZwQ3BzaUhaT3NKNFFVVjFid25zQkVBemFLRUZJMUhEZ29aZFNtUQ%3D%3D%22%7D';
+                // cursor QVFCeHNpUnA4M1JDZUNhdFV1aHNueUFlYTVSdFZmVU5FV0xFM0l4VmtieVphRDVYXzlwbXBKUEU5MmE5cXF3YTdKNlB4WXl0bHJEYTRKMXFHRVZxbHBRdw==
+                document.querySelector('#fetchBtn').onclick = function() {
+                    var url = document.querySelector('#urlInput').value;
+                    console.log(`Click! ${url}`);
+                    fetch(url).then(res => {
+                        console.log(`${res.status} ${res.statusText} => ${url}`);
+                        return res.json();
+                    })
+                    .then(json => {
+                        var pageInfo = json.data.user.edge_owner_to_timeline_media.page_info;
+                        console.log(`${pageInfo.has_next_page} ${pageInfo.end_cursor}`);
+                        if(pageInfo.has_next_page && pageInfo.end_cursor) {
+                            document.querySelector('#end_cursor').textContent = pageInfo.end_cursor;
+                        }
+
+                        var newContents = [];
+                        var nodeList = json.data.user.edge_owner_to_timeline_media.edges;    
+                        nodeList.map(el => {
+                            console.log(el);
+                            var content = {};
+                            content['caption'] = el.node.edge_media_to_caption.edges[0].node.text;
+                            content['shortCode'] = el.node.shortcode;
+                            content['displayUrl'] = el.node.display_url;
+                            _first += 1;
+
+                            return content;
+                        }).forEach(content => {
+                            // console.log(`${el.node.id} ${el.node.display_url}`);
+                            createFeed(content);
+
+                        });
+
+                        return newContents;
+                    })
+                    ;
+                };
+                document.querySelector('#moreBtn').onclick = function() {
+                    var fetchUrl = 'https://www.instagram.com/graphql/query/?';
+                    var queryHash = 'f2405b236d85e8296cf30347c9f08c2a';
+                    var instagramId = '2532030987';
+                    var first = _first;
+                    var after = getEndCursor();
+                    var variables = {
+                        id: instagramId,
+                        first: first,
+                        after: after
+                    };
+                    var encodedvariables = encodeURI(JSON.stringify(variables));
+                    var composedUrl = `${fetchUrl}query_hash=${queryHash}&variables=${encodedvariables}`;
+                    console.log(composedUrl);
+                    document.querySelector('#urlInput').value = composedUrl;
+                    document.querySelector('#fetchBtn').onclick();
+                };
+                function getEndCursor() {
+                    var t = document.querySelector('#end_cursor').textContent;
+                    if(t !== undefined && t !== '') {
+                        return t;
+                    }
+                    return null;
+                }
+
+                function createFeed(content) {
+                    var $caption = document.createElement('p');
+                    $caption.textContent = content.caption;
+
+                    var $img = document.createElement('img');
+                    $img.style.width = '150px';
+                    $img.style.height = '150px';
+                    $img.src = content.displayUrl;
+
+                    var $anchor = document.createElement('a');
+                    $anchor.href = `https://www.instagram.com/p/${content.shortCode}`;
+                    $anchor.target = '_blank';
+                    $anchor.appendChild($img);
+
+                    var $img_container = document.createElement('div');
+                    $img_container.append($anchor);
+
+
+                    var $container = document.createElement('div');
+                    $container.append($img_container);
+                    $container.append($caption);
+                    document.querySelector('#timeline_container').appendChild($container);
+
+                }
+            // };
+        </script>
+    </body>
+</html>
